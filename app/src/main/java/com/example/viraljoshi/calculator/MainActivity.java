@@ -33,11 +33,13 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //As
+                //As edittext takes only String values. So that has to converted to Integer to take inputs from the user
                 num1 = Integer.parseInt(etx1.getText().toString());
                 num2 = Integer.parseInt(etx2.getText().toString());
-                res = num1 + num2;
 
+                // Addition of the both the edit text
+                res = num1 + num2;
+// Results showed on 3rd edit textg
                 etx3.setText(String.valueOf(res));
 
             }
