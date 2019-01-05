@@ -1,11 +1,8 @@
 package com.example.viraljoshi.calculator;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -15,104 +12,118 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     // Variable declaration
-    private EditText etx1, etx2;
-    private TextView txt_result_value;
-    private Button add, sub, mul, div;
+    private EditText etxValue1, etxValue2;
+    private TextView txtResultValue;
+    private Button btnAdd, btnSub, btnMul, btnDiv;
 
     public static final String SHARD_PREFS = "sharedprefs";
-    public static final String text = "text";
+    public static final String VALUE1 = "value1";
+    public static final String VALUE2 = "value2";
+    public static final String ADD = "addditon";
+    public static final String SUB = "substraction";
+    public static final String MUL = "multiplication";
+    public static final String DIV = "division";
 
-    private String intNo;
-    private boolean switchOn;
-
-
-    private int num1, num2, res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//Taking references from the xml file of each view controls
-        etx1 = (EditText) findViewById(R.id.etx_value1);
-        etx2 = (EditText) findViewById(R.id.etx_value2);
+        etxValue1 = (EditText) findViewById(R.id.etx_value1);
+        etxValue2 = (EditText) findViewById(R.id.etx_value2);
 
-        txt_result_value = (TextView) findViewById(R.id.txt_result_value);
+        txtResultValue = (TextView) findViewById(R.id.txt_result_value);
+
+        btnAdd = (Button) findViewById(R.id.btn_add);
+        btnSub = (Button) findViewById(R.id.btn_sub);
+        btnMul = (Button) findViewById(R.id.btn_mul);
+        btnDiv = (Button) findViewById(R.id.btn_div);
 
 
-        add = (Button) findViewById(R.id.btn_add);
-        sub = (Button) findViewById(R.id.btn_sub);
-        mul = (Button) findViewById(R.id.btn_mul);
-        div = (Button) findViewById(R.id.btn_div);
-//       SharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
-
-// On click listener is used when user performs an action by pressing button on runtime
-        add.setOnClickListener(new View.OnClickListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //As edittext takes only String values. So that has to converted to Integer to take inputs from the user
-                num1 = Integer.parseInt(etx1.getText().toString());
-                num2 = Integer.parseInt(etx2.getText().toString());
-                // Addition of the both the edit text
-                res = num1 + num2;
-// Results showed on 3rd edit text
-                txt_result_value.setText(String.valueOf(res));
+                operation(ADD);
+            }
 
+
+        });
+        btnSub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                operation(SUB);
+            }
+        });
+        btnMul.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                operation(MUL);
             }
         });
 
-        sub.setOnClickListener(new View.OnClickListener() {
+
+        btnDiv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num1 = Integer.parseInt(etx1.getText().toString());
-                num2 = Integer.parseInt(etx2.getText().toString());
-                res = num1 - num2;
-                txt_result_value.setText(String.valueOf(res));
-
+                operation(DIV);
             }
         });
-        mul.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                num1 = Integer.parseInt(etx1.getText().toString());
-                num2 = Integer.parseInt(etx2.getText().toString());
-                res = num1 * num2;
-                txt_result_value.setText(String.valueOf(res));
-
-            }
-        });
-
-        div.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                num1 = Integer.parseInt(etx1.getText().toString());
-                num2 = Integer.parseInt(etx2.getText().toString());
-                res = num1 / num2;
-                txt_result_value.setText(String.valueOf(res));
-
-            }
-        });
-        savedata();
+        loadData();
 
     }
 
-    public void savedata() {
+    public void operation(String calculation) {
+
+        if (TextUtils.isEmpty(etxValue1.getText().toString()) || TextUtils.isEmpty(etxValue2.getText().toString())) {
+            Toast.makeText(getApplicationContext(), "Please Enter data in both the Box..", Toast.LENGTH_LONG).show();
+        } else {
+
+            int etxNum1 = Integer.parseInt(etxValue1.getText().toString());
+            int etxNum2 = Integer.parseInt(etxValue2.getText().toString());
+            int etxRes;
+            if (calculation.equals(ADD)) {
+
+                etxRes = etxNum1 + etxNum2;
+                txtResultValue.setText(String.valueOf(etxRes));
+            } else if (calculation.equals(SUB)) {
+
+                etxRes = etxNum1 - etxNum2;
+                txtResultValue.setText(String.valueOf(etxRes));
+            } else if (calculation.equals(MUL)) {
+                etxRes = etxNum1 * etxNum2;
+                txtResultValue.setText(String.valueOf(etxRes));
+            } else if (calculation.equals(DIV)) {
+
+                etxRes = etxNum1 / etxNum2;
+                txtResultValue.setText(String.valueOf(etxRes));
+            }
+            saveData();
+
+        }
+
+
+    }
+
+
+    public void saveData() {
+
         SharedPreferences sharedPreferences = getSharedPreferences(SHARD_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(text, String.valueOf(num1));
-        editor.putString(text, String.valueOf(num2));
+        editor.putString(VALUE1, etxValue1.getText().toString());
+        editor.putString(VALUE2, etxValue2.getText().toString());
         editor.apply();
         editor.commit();
         Toast.makeText(getApplicationContext(), "Data Saved..", Toast.LENGTH_LONG).show();
+
     }
 
-    public void loaddata() {
+    public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARD_PREFS, MODE_PRIVATE);
-        intNo = sharedPreferences.getString(text, "");
-        Toast.makeText(getApplicationContext(), "Data Loaded..", Toast.LENGTH_LONG).show();
+        String intNo1 = sharedPreferences.getString(VALUE1, "");
+        etxValue1.setText(intNo1);
+        String intNo2 = sharedPreferences.getString(VALUE2, "");
+        etxValue2.setText(intNo2);
     }
 
-    public void updateViews() {
-        etx1.setText("");
-    }
 
 }
